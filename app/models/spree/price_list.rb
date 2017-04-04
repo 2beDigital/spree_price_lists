@@ -1,6 +1,11 @@
 module Spree
   class PriceList < ActiveRecord::Base
-    has_many :prices
+
+    after_save :assign_actual_product_price
+
+    has_many :prices,
+      class_name: 'Spree::Price',
+      dependent: :destroy
 
     validates :name, :internal_name, :currency,
       presence: true
@@ -24,6 +29,15 @@ module Spree
 
     def set_default_currency
       self.currency ||= Spree::Config.currency
+    end
+
+    def assign_actual_product_price
+      return false if Spree::Price.where(price_list_id: self.id).count > 0
+      Spree::Price.where(price_list_id: Spree::PriceList.first.id).all.each do |price|
+        new_price = price.dup
+        new_price.price_list_id = self.id
+        new_price.save!
+      end
     end
   end
 end
