@@ -42,7 +42,7 @@ module Spree
       price = Spree::Price.where(variant_id: self.id)
       lists = Spree::PriceList.all
       lists.each do |list|
-        if price.count < lists.count && price.price_list_id != list.id
+        if price.count < lists.count && price.first.price_list_id != list.id
           new_price = price.first.dup
           new_price.price_list_id = list.id
           new_price.save!
