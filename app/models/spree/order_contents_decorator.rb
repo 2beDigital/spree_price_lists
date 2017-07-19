@@ -3,7 +3,8 @@ module Spree
     private
 
     def add_to_line_item(variant, quantity, options = {})
-      price_list = options[:price_list]
+      price_list = options[:price_list] ? options[:price_list] : order.price_list
+      options[:price_list] = price_list unless options[:price_list]
       line_item = grab_line_item_by_variant(variant, false, options)
 
       if line_item
