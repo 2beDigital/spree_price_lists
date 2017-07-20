@@ -1,5 +1,4 @@
-module Spree
-  OrderContents.class_eval do
+Spree::OrderContents.class_eval do
     private
 
     def add_to_line_item(variant, quantity, options = {})
@@ -14,7 +13,7 @@ module Spree
       else
         opts = { currency: order.currency,
                  price_list: price_list}.merge ActionController::Parameters.new(options).
-                                         permit(PermittedAttributes.line_item_attributes)
+                                         permit(Spree::PermittedAttributes.line_item_attributes)
         line_item = order.line_items.new(quantity: quantity,
                                           variant: variant,
                                           options: opts)
@@ -23,6 +22,4 @@ module Spree
       line_item.save!
       line_item
     end
-
-  end
 end
